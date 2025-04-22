@@ -18,6 +18,7 @@ public struct BottomSheet<Content: View>: View {
     @State private var previousDragValue: DragGesture.Value?
 
     @Binding var isPresented: Bool
+    @Binding var allowClose: Bool
     private let height: CGFloat
     private let topBarHeight: CGFloat
     private let topBarCornerRadius: CGFloat
@@ -30,6 +31,7 @@ public struct BottomSheet<Content: View>: View {
     
     public init(
         isPresented: Binding<Bool>,
+        allowClose: Binding<Bool> = .constant(true),
         height: CGFloat,
         topBarHeight: CGFloat = 30,
         topBarCornerRadius: CGFloat? = nil,
@@ -43,6 +45,7 @@ public struct BottomSheet<Content: View>: View {
         self.topBarBackgroundColor = topBarBackgroundColor
         self.contentBackgroundColor = contentBackgroundColor
         self._isPresented = isPresented
+        self._allowClose = allowClose
         self.height = height
         self.topBarHeight = topBarHeight
         if let topBarCornerRadius = topBarCornerRadius {
@@ -92,8 +95,10 @@ public struct BottomSheet<Content: View>: View {
             .edgesIgnoringSafeArea(.all)
             .animation(animation)
             .onTapGesture {
-                self.isPresented = false
-                onDismiss?()
+                if allowClose {
+                    self.isPresented = false
+                    onDismiss?()
+                }
             }
     }
     
@@ -120,7 +125,7 @@ public struct BottomSheet<Content: View>: View {
                         let timeDiff = Double(value.time.timeIntervalSince(previousValue.time))
                         let heightDiff = Double(offsetY - previousOffsetY)
                         let velocityY = heightDiff / timeDiff
-                        if velocityY > 1400 {
+                        if velocityY > 1400 && allowClose {
                             self.isPresented = false
                             onDismiss?()
                             return
@@ -131,7 +136,7 @@ public struct BottomSheet<Content: View>: View {
                 })
                 .onEnded({ (value) in
                     let offsetY = value.translation.height
-                    if offsetY > self.dragToDismissThreshold {
+                    if offsetY > self.dragToDismissThreshold && allowClose {
                         self.isPresented = false
                         onDismiss?()
                     }

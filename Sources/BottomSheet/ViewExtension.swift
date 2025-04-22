@@ -12,6 +12,7 @@ import SwiftUI
 public extension View {
     func bottomSheet<Content: View>(
         isPresented: Binding<Bool>,
+        allowClose: Binding<Bool> = .constant(true),
         height: CGFloat,
         topBarHeight: CGFloat = 30,
         topBarCornerRadius: CGFloat? = nil,
@@ -24,6 +25,7 @@ public extension View {
         ZStack {
             self
             BottomSheet(isPresented: isPresented,
+                        allowClose: allowClose,
                         height: height,
                         topBarHeight: topBarHeight,
                         topBarCornerRadius: topBarCornerRadius,
@@ -37,6 +39,7 @@ public extension View {
     
     func bottomSheet<Item: Identifiable, Content: View>(
         item: Binding<Item?>,
+        allowClose: Binding<Bool> = .constant(true),
         height: CGFloat,
         topBarHeight: CGFloat = 30,
         topBarCornerRadius: CGFloat? = nil,
@@ -56,6 +59,7 @@ public extension View {
         
         return bottomSheet(
             isPresented: isPresented,
+            allowClose: allowClose,
             height: height,
             topBarHeight: topBarHeight,
             topBarCornerRadius: topBarCornerRadius,
